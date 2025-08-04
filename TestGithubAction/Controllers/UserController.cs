@@ -10,6 +10,11 @@ namespace TestGithubAction.Controllers
     {
         private readonly UserService userService;
 
+        public IActionResult Index()
+        {
+            return Ok(new { Message = "Hello World!" });
+        }
+
         public UserController(UserService userService)
         {
             this.userService = userService;
