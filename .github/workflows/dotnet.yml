@@ -6,14 +6,16 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
+    tags:
+     - "v*"  # Kích hoạt khi tag (ví dụ: v1.0.0) được push
   pull_request:
     branches: [ "main" ]
-  
+   
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -31,3 +33,58 @@ jobs:
       if: success()  # chỉ chạy khi các bước trước thành công
       run: dotnet publish ProductManager.API/ProductManager.API.csproj -c Release --self-contained true -r win-x64 -o ./publish
 
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+
+    # tao zip # Nén toàn bộ thư mục hiện tại
+    - name: Zip folder
+      run: | 
+       zip -r my_folder.zip my_folder ./ 
+    
+    # tao  tar # Nén toàn bộ thư mục hiện tại
+    - name: Tar folder
+      run: |
+       tar -czvf my_folder.tar.gz my_folder ./ 
+  
+    # upload cac build len artifact
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+       name: my-zipped-folder 
+       path: my_folder.zip my_folder.tar.gz
+
+    # tao github release
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token tự động có sẵn
+      with:
+        tag_name: ${{ github.ref_name }}  # Lấy tên tag (ví dụ: v1.0.0)
+        release_name: "Release ${{ github.ref_name }}"
+        draft: false
+        prerelease: false
+
+    - name: Upload ZIP to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}  # URL từ bước tạo release
+        asset_path: ./my_folder.zip
+        asset_name: my_folder.zip
+        asset_content_type: application/zip
+
+    - name: Upload TAR.GZ to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./my_folder.tar.gz
+        asset_name: my_folder.tar.gz
+        asset_content_type: application/gzip
