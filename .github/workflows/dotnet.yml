@@ -6,8 +6,6 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
-    tags:
-     - "v*"  # Kích hoạt khi tag (ví dụ: v1.0.0) được push
   pull_request:
     branches: [ "main" ]
    
