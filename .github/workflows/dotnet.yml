@@ -32,6 +32,13 @@ jobs:
     - name: Publish Release - Self-contained
       if: success()  # chỉ chạy khi các bước trước thành công
       run: dotnet publish ProductManager.API/ProductManager.API.csproj -c Release --self-contained true -r win-x64 -o ./publish
+    
+    # Dùng upload-artifact và download-artifact để chia sẻ thư mục publish giữa các jobs.
+    - name: Upload published app
+      uses: actions/upload-artifact@v4
+      with:
+        name: published-app
+        path: ./publish
 
   release:
     runs-on: ubuntu-latest
@@ -41,7 +48,12 @@ jobs:
     
     steps:
 
-    - uses: actions/checkout@v4
+    #  tải artifact xuống và đưa vào release
+    - name: Download published app
+      uses: actions/download-artifact@v4
+      with:
+        name: published-app
+        path: ./publish
 
     # tao zip # Nén toàn bộ thư mục publish
     - name: Zip folder
