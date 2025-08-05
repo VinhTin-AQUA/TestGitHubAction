@@ -37,18 +37,21 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: write
-
+    needs: build
+    
     steps:
 
-    # tao zip # Nén toàn bộ thư mục hiện tại
+    - uses: actions/checkout@v4
+
+    # tao zip # Nén toàn bộ thư mục publish
     - name: Zip folder
       run: | 
-       zip -r my_folder.zip my_folder ./ 
+       zip -r my_folder.zip ./publish
     
-    # tao  tar # Nén toàn bộ thư mục hiện tại
+    # tao  tar # Nén toàn bộ thư mục publish
     - name: Tar folder
       run: |
-       tar -czvf my_folder.tar.gz my_folder ./ 
+       tar -czvf my_folder.tar.gz ./publish
   
     # upload cac build len artifact
     - name: Upload artifact
@@ -73,7 +76,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
+      with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # URL từ bước tạo release
         asset_path: ./my_folder.zip
         asset_name: my_folder.zip
