@@ -15,7 +15,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
       run: dotnet publish ProductManager.API/ProductManager.API.csproj -c Release --self-contained true -r win-x64 -o ./publish
 
   release:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     needs: build
