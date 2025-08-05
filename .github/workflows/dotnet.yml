@@ -29,10 +29,5 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish Release - Self-contained
       if: success()  # chỉ chạy khi các bước trước thành công
-      run: |
-        dotnet publish ./ProductManager.API/ProductManager.API.csproj 
-             --configuration Release 
-             --runtime win-x64 
-             --self-contained true 
-             /p:PublishTrimmed=true 
-             --output ./publish
+      run: dotnet publish ProductManager.API/ProductManager.API.csproj -c Release --self-contained true -r win-x64 -o ./publish
+
