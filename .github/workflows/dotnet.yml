@@ -75,8 +75,13 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token tự động có sẵn
               with:
+                  # nếu sử dụng cách xác định tag name này thì cần chỉ định tag và push
+                  # git tag v1.0.0
+                  # git push origin v1.0.0
                   # tag_name: ${{ github.ref_name }}  # Lấy tên tag (ví dụ: v1.0.0)
                   # release_name: "Release ${{ github.ref_name }}"
+
+                  # không cần chỉ định tag khi push
                   tag_name: 'v1.0.0' # ✅ Đặt tên tag rõ ràng
                   release_name: 'Release v1.0.0'
                   draft: false
